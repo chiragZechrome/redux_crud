@@ -87,6 +87,22 @@ const Form = () => {
     return isValid;
   };
 
+  const resetForm = () => {
+    if (editUserId !== -1) {
+      const id = fieldData[id];
+      const selected = fieldData[selected];
+      dispatch(onFieldReset());
+      dispatch(onFieldChange({ name: "id", value: id }));
+      dispatch(onFieldChange({ name: "selected", value: selected }));
+    } else {
+      dispatch(onFieldReset());
+    }
+
+    for (let field in errorData) {
+      dispatch(onErrorChange({ name: field, value: "" }));
+    }
+  };
+
   return (
     <div>
       <div className="employee-form">
@@ -238,8 +254,125 @@ const Form = () => {
               </label>
             </div>
           </label>
+
+          <label>
+            <div className="label">
+              Date of Birth:
+              <label className="validation-error" id="dobError">
+                {errorData.dobError}
+              </label>
+            </div>
+            <input
+              type="date"
+              name="dob"
+              value={fieldData.dob}
+              onChange={handleInputChange}
+            />
+          </label>
+
+          <br />
+          <label>
+            <div className="label">
+              Country:
+              <label className="validation-error" id="countryError">
+                {errorData.countryError}
+              </label>
+            </div>
+            <select
+              id="country"
+              name="country"
+              value={fieldData.country}
+              onChange={handleInputChange}
+            >
+              <option value="">Select a country</option>
+              {countryStateCityArray.map((csca, index) => (
+                <option key={index} value={csca.Country}>
+                  {csca.Country}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <br />
+          {
+            <>
+              <label>
+                <div className="label">
+                  State:
+                  <label className="validation-error" id="stateError">
+                    {errorData.stateError}
+                  </label>
+                </div>
+                <select
+                  id="state"
+                  name="state"
+                  value={fieldData.state}
+                  onChange={handleInputChange}
+                >
+                  <option value="">Select a state</option>
+                  {fieldData.country &&
+                    countryStateCityArray
+                      .find((country) => country.Country === fieldData.country)
+                      .StateList.map((state, index) => (
+                        <option key={index} value={state.State}>
+                          {state.State}
+                        </option>
+                      ))}
+                </select>
+              </label>
+              <br />
+            </>
+          }
+
+          {
+            <>
+              <label>
+                <div className="label">
+                  City:
+                  <label className="validation-error" id="cityError">
+                    {errorData.cityError}
+                  </label>
+                </div>
+                <select
+                  id="city"
+                  name="city"
+                  value={fieldData.city}
+                  onChange={handleInputChange}
+                >
+                  <option value="">Select a city</option>
+                  {fieldData.state &&
+                    countryStateCityArray
+                      .find((country) => country.Country === fieldData.country)
+                      .StateList.find(
+                        (state) => state.State === fieldData.state
+                      )
+                      .CityList.map((city, index) => (
+                        <option key={index} value={city}>
+                          {city}
+                        </option>
+                      ))}
+                </select>
+              </label>
+              <br />
+            </>
+          }
+
+          <br />
+          <button type="submit" className="formButton" onClick={SettingId}>
+            {editUserId !== -1 ? "Update" : "Submit"}
+          </button>
+          <button type="button" className="formButton" onClick={resetForm}>
+            Reset Form
+          </button>
+          {selectedIds.length > 0 && (
+            <button className="formButton" onClick={handleDeleteSelected}>
+              Delete Selected
+            </button>
+          )}
         </form>
       </div>
     </div>
   );
 };
+
+export default Form;
