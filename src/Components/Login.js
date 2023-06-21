@@ -1,0 +1,67 @@
+import axios from "../axios";
+import React from "react";
+// import { Button } from 'react-bootstrap';
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { userAdded } from "../features/users/userSlice";
+
+const Login = ({ loginCredentials, setLoginCredentials }) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    setLoginCredentials({
+      ...loginCredentials,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = (e) => {
+    navigate("/home");
+    axios.get("/users").then((response) => {
+      for (let data of response.data) {
+        dispatch(userAdded(data));
+      }
+    });
+  };
+
+  return (
+    <div id="loginContainer">
+      <div id="loginForm">
+        <div id="formTitle">
+          <h2>Login</h2>
+        </div>
+        <hr />
+        <div>
+          <form id="loginFormField">
+            <label>UserId</label>
+            <input
+              type="text"
+              id="userId"
+              name="userId"
+              value={loginCredentials.userId}
+              onChange={handleChange}
+            />
+            <br />
+            <label>Password</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              value={loginCredentials.password}
+              onChange={handleChange}
+              autoComplete="username"
+            />
+            <br />
+            {/* <input type="button" onClick={handleSubmit} value="Login" /> */}
+            <button type="submit" className="formButton" onClick={handleSubmit}>
+              Login
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Login;
