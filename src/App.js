@@ -1,5 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
+import Form from './Components/Form';
 
 export const countryStateCityArray = [
   {
@@ -56,22 +57,33 @@ export const countryStateCityArray = [
 ];
 
 function App() {
+  const [loginCredentials, setLoginCredentials] = useState({
+    userId: "",
+    password: "",
+  });
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>CRUD Operation Using React</h1>
+      <hr />
+      <Routes>
+      <Route
+          path="/"
+          element={
+            <Login
+              loginCredentials={loginCredentials}
+              setLoginCredentials={setLoginCredentials}
+            />
+          }
+        />
+        <Route path="/home" element={
+          <Protected loginCredentials={loginCredentials}>
+            <>
+            <Form />
+            <Table />
+            </>
+          </Protected>
+        } />
+      </Routes>
     </div>
   );
 }
