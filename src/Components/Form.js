@@ -86,22 +86,24 @@ const Form = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validateSubmit()) {
-      // Edit existing user
-      axios.put(`/users/${editUserId}`, fieldData).then((response) => {
-        dispatch(
-          userUpdated({
-            id: editUserId,
-            user: response.data,
-          })
-        );
-      });
-    } else {
-      // Add new user
-      axios.post("/users", fieldData).then((response) => {
-        dispatch(userAdded(response.data));
-      });
+      if (editUserId !== -1) {
+        // Edit existing user
+        axios.put(`/users/${editUserId}`, fieldData).then((response) => {
+          dispatch(
+            userUpdated({
+              id: editUserId,
+              user: response.data,
+            })
+          );
+        });
+      } else {
+        // Add new user
+        axios.post("/users", fieldData).then((response) => {
+          dispatch(userAdded(response.data));
+        });
+      }
+      dispatch(onFieldReset());
     }
-    dispatch(onFieldReset());
   };
 
   const validateSubmit = () => {

@@ -85,7 +85,7 @@ function App() {
             <Protected loginCredentials={loginCredentials}>
               <>
                 <Form />
-                <Table />
+                {/* <Table /> */}
               </>
             </Protected>
           }
