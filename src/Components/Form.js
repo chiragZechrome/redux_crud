@@ -1,14 +1,19 @@
 import React from "react";
+import axios from "../axios";
 import { useDispatch, useSelector } from "react-redux";
 import { countryStateCityArray } from "../App";
 import {
   onFieldReset,
   onFieldChange,
+  onEdited,
+  onErrorChange,
+  userDeleted,
   selectEditUserId,
   selectErrorData,
   selectFieldData,
   userAdded,
   userUpdated,
+  selectUser,
 } from "../features/users/userSlice";
 
 const Form = () => {
@@ -27,11 +32,29 @@ const Form = () => {
       dispatch(onFieldReset());
       dispatch(onEdited());
     }
-    let selectedUsers = users.filter((user) => user.selected === true)
+    let selectedUsers = users.filter((user) => user.selected === true);
     for (let user of selectedUsers) {
       axios.delete(`/users/${user.id}`);
-      dispatch(userDeleted(id));
+      dispatch(userDeleted(user.id));
     }
+  };
+
+  const handleCheckboxChange = (e) => {
+    const { value, checked } = e.target;
+    let updatedHobbies = [...fieldData.hobbies];
+    if (checked) {
+      updatedHobbies.push(value);
+    } else {
+      updatedHobbies = updatedHobbies.filter((hobby) => hobby !== value);
+    }
+    if (updatedHobbies.length > 0) {
+      dispatch(onErrorChange({ name: "hobbiesError", value: "" }));
+    } else {
+      dispatch(
+        onErrorChange({ name: "hobbiesError", value: "this field is required" })
+      );
+    }
+    dispatch(onFieldChange({ name: "hobbies", value: updatedHobbies }));
   };
 
   const handleInputChange = (e) => {
@@ -122,10 +145,10 @@ const Form = () => {
 
   const resetForm = () => {
     if (editUserId !== -1) {
-      const id = fieldData[id];
-      const selected = fieldData[selected];
+      const fieldId = fieldData.id;
+      const selected = fieldData.selected;
       dispatch(onFieldReset());
-      dispatch(onFieldChange({ name: "id", value: id }));
+      dispatch(onFieldChange({ name: "id", value: fieldId }));
       dispatch(onFieldChange({ name: "selected", value: selected }));
     } else {
       dispatch(onFieldReset());
@@ -397,7 +420,7 @@ const Form = () => {
           <button type="button" className="formButton" onClick={resetForm}>
             Reset Form
           </button>
-          {selectedIds.length > 0 && (
+          {users.filter((user) => user.selected === true).length > 0 && (
             <button className="formButton" onClick={handleDeleteSelected}>
               Delete Selected
             </button>

@@ -1,6 +1,10 @@
-import logo from './logo.svg';
-import './App.css';
-import Form from './Components/Form';
+import "./App.css";
+import Form from "./Components/Form";
+import React, { useState } from "react";
+import { Route, Routes } from "react-router-dom";
+import Login from "./Components/Login";
+import Protected from "./Protected";
+import Table from "./Components/Table";
 
 export const countryStateCityArray = [
   {
@@ -66,7 +70,7 @@ function App() {
       <h1>CRUD Operation Using React</h1>
       <hr />
       <Routes>
-      <Route
+        <Route
           path="/"
           element={
             <Login
@@ -75,14 +79,17 @@ function App() {
             />
           }
         />
-        <Route path="/home" element={
-          <Protected loginCredentials={loginCredentials}>
-            <>
-            <Form />
-            <Table />
-            </>
-          </Protected>
-        } />
+        <Route
+          path="/home"
+          element={
+            <Protected loginCredentials={loginCredentials}>
+              <>
+                <Form />
+                <Table />
+              </>
+            </Protected>
+          }
+        />
       </Routes>
     </div>
   );

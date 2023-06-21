@@ -74,6 +74,10 @@ const usersSlice = createSlice({
         state.fieldData[field] = initialField[field];
       }
     },
+    onErrorChange(state, action) {
+      const { name, value } = action.payload;
+      state.errorData[name] = value;
+    },
   },
 });
 
@@ -90,6 +94,7 @@ export const {
   onEdited,
   onFieldChange,
   onFieldReset,
+  onErrorChange,
 } = usersSlice.actions;
 
 export default usersSlice.reducer;
