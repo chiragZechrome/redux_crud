@@ -18,6 +18,22 @@ const Form = () => {
   const errorData = useSelector(selectErrorData);
   const fieldData = useSelector(selectFieldData);
 
+  const handleDeleteSelected = () => {
+    if (
+      editUserId !== -1 &&
+      fieldData.id === editUserId &&
+      fieldData.selected === true
+    ) {
+      dispatch(onFieldReset());
+      dispatch(onEdited());
+    }
+    let selectedUsers = users.filter((user) => user.selected === true)
+    for (let user of selectedUsers) {
+      axios.delete(`/users/${user.id}`);
+      dispatch(userDeleted(id));
+    }
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     let targetField = name + "Error";
@@ -85,6 +101,23 @@ const Form = () => {
       }
     }
     return isValid;
+  };
+
+  const changeId = () => {
+    let number = 1;
+    if (users.length === 0) {
+      return number;
+    } else if (users.length > 0) {
+      let getId = users.map((x) => x.id);
+      number = Math.max(...getId) + 1;
+      return number;
+    }
+  };
+
+  const SettingId = () => {
+    if (editUserId === -1) {
+      dispatch(onFieldChange({ name: "id", value: changeId() }));
+    }
   };
 
   const resetForm = () => {
