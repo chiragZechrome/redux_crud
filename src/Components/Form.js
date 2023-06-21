@@ -14,6 +14,8 @@ import {
   userAdded,
   userUpdated,
   selectUser,
+  selectSelectedIds,
+  onClearSelectedIds,
 } from "../features/users/userSlice";
 
 const Form = () => {
@@ -22,21 +24,29 @@ const Form = () => {
   const editUserId = useSelector(selectEditUserId);
   const errorData = useSelector(selectErrorData);
   const fieldData = useSelector(selectFieldData);
+  const selectedIds = useSelector(selectSelectedIds);
 
   const handleDeleteSelected = () => {
+    console.log(users)
+    debugger
+    console.log(editUserId)
+    console.log(fieldData.id)
+    console.log(fieldData.selected)
     if (
       editUserId !== -1 &&
       fieldData.id === editUserId &&
-      fieldData.selected === true
+      selectedIds.includes(editUserId)
     ) {
       dispatch(onFieldReset());
       dispatch(onEdited());
     }
-    let selectedUsers = users.filter((user) => user.selected === true);
-    for (let user of selectedUsers) {
-      axios.delete(`/users/${user.id}`);
-      dispatch(userDeleted(user.id));
+    for (let user of users) {
+      if (selectedIds.includes(user.id)) {
+        axios.delete(`/users/${user.id}`);
+        dispatch(userDeleted(user.id));
+      }
     }
+    dispatch(onClearSelectedIds());
   };
 
   const handleCheckboxChange = (e) => {
@@ -102,8 +112,9 @@ const Form = () => {
           dispatch(userAdded(response.data));
         });
       }
-      dispatch(onFieldReset());
     }
+    dispatch(onEdited());
+    dispatch(onFieldReset());
   };
 
   const validateSubmit = () => {
@@ -422,7 +433,7 @@ const Form = () => {
           <button type="button" className="formButton" onClick={resetForm}>
             Reset Form
           </button>
-          {users.filter((user) => user.selected === true).length > 0 && (
+          {selectedIds.length > 0 && (
             <button className="formButton" onClick={handleDeleteSelected}>
               Delete Selected
             </button>

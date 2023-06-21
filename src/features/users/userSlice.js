@@ -32,6 +32,7 @@ const initialState = {
   editUserId: -1,
   fieldData: initialField,
   errorData: initialErrors,
+  selectedIds: [],
 };
 
 const usersSlice = createSlice({
@@ -42,6 +43,7 @@ const usersSlice = createSlice({
       state.users.push(action.payload);
     },
     userUpdated(state, action) {
+      // debugger
       const { id, user } = action.payload;
       for (let data of state.users) {
         if (data.id === id) {
@@ -51,12 +53,46 @@ const usersSlice = createSlice({
         }
       }
     },
+    onUpdateSelected(state, action) {
+      // debugger
+      const { id, checked } = action.payload;
+      for (let data of state.users) {
+        if (data.id === id) {
+          if (checked) {
+            state.selectedIds.push(id);
+          }else{
+            state.selectedIds.splice(state.selectedIds.indexOf(id), 1);
+          }
+          data.selected = !data.selected;
+        }
+      }
+    },
+    onClearSelectedIds(state){
+      while(state.selectedIds.length){
+        state.selectedIds.pop();
+      }
+    },
+    onUpdateMainCheckbox(state, action) {
+      let checked = false;
+      checked = action.payload;
+      if (checked) {
+        for (let data of state.users) {
+          if(!state.selectedIds.includes(data.id)){
+            state.selectedIds.push(data.id);
+          }
+        }
+      } else {
+        while(state.selectedIds.length){
+          state.selectedIds.pop();
+        }
+      }
+    },
     userDeleted(state, action) {
       for (let data in state.users) {
         if (state.users[data].id === action.payload) {
           state.users.splice(data, 1);
+          break;
         }
-        break;
       }
     },
     onEdit(state, action) {
@@ -85,6 +121,7 @@ export const selectUser = (state) => state.handler.users;
 export const selectEditUserId = (state) => state.handler.editUserId;
 export const selectFieldData = (state) => state.handler.fieldData;
 export const selectErrorData = (state) => state.handler.errorData;
+export const selectSelectedIds = (state) => state.handler.selectedIds;
 
 export const {
   userAdded,
@@ -95,6 +132,9 @@ export const {
   onFieldChange,
   onFieldReset,
   onErrorChange,
+  onUpdateSelected,
+  onUpdateMainCheckbox,
+  onClearSelectedIds,
 } = usersSlice.actions;
 
 export default usersSlice.reducer;

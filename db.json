@@ -16,55 +16,5 @@
   "profile": {
     "name": "typicode"
   },
-  "users": [
-    {
-      "id": 1,
-      "firstName": "Sydney",
-      "lastName": "Wilder",
-      "email": "jyzico@mailinator.com",
-      "address": "Sit quis quis et exp",
-      "gender": "other",
-      "hobbies": [
-        "listeningmusic"
-      ],
-      "dob": "1999-09-02",
-      "country": "India",
-      "state": "UP",
-      "city": "Lucknow",
-      "selected": false
-    },
-    {
-      "id": 2,
-      "firstName": "Alexis",
-      "lastName": "Davis",
-      "email": "jivo@mailinator.com",
-      "address": "Ad corporis ab dolor",
-      "gender": "female",
-      "hobbies": [
-        "listeningmusic"
-      ],
-      "dob": "2020-11-26",
-      "country": "USA",
-      "state": "Alabama",
-      "city": "Montgomery",
-      "selected": false
-    },
-    {
-      "id": 3,
-      "firstName": "Scott",
-      "lastName": "Joyner",
-      "email": "caqomijate@mailinator.com",
-      "address": "Sunt qui consequatu",
-      "gender": "male",
-      "hobbies": [
-        "watchingmovies",
-        "listeningmusic"
-      ],
-      "dob": "1987-03-14",
-      "country": "USA",
-      "state": "Arizona",
-      "city": "Tucson",
-      "selected": false
-    }
-  ]
+  "users": []
 }
