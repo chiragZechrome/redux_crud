@@ -2,6 +2,7 @@ import axios from "../axios";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  deleteUser,
   onEdit,
   onEdited,
   onFieldChange,
@@ -10,7 +11,6 @@ import {
   onUpdateSelected,
   selectEditUserId,
   selectFieldData,
-  userDeleted,
 } from "../features/users/userSlice";
 import { selectUser } from "../features/users/userSlice";
 
@@ -43,8 +43,7 @@ const Table = () => {
   };
 
   const handleDelete = (id) => {
-    axios.delete(`/users/${id}`);
-    dispatch(userDeleted(id));
+    dispatch(deleteUser(id));
     if (editUserId === id) {
       dispatch(onFieldReset());
       dispatch(onEdited());
@@ -63,7 +62,10 @@ const Table = () => {
                     <th>
                       <input
                         type="checkbox"
-                        checked={users.filter((user) => user.selected === true).length === users.length}
+                        checked={
+                          users.filter((user) => user.selected === true)
+                            .length === users.length
+                        }
                         onChange={(e) => handleSelectAllRowsChange(e)}
                       />
                     </th>

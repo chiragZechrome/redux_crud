@@ -1,5 +1,4 @@
 import React from "react";
-import axios from "../axios";
 import { useDispatch, useSelector } from "react-redux";
 import { countryStateCityArray } from "../App";
 import {
@@ -7,13 +6,13 @@ import {
   onFieldChange,
   onEdited,
   onErrorChange,
-  userDeleted,
   selectEditUserId,
   selectErrorData,
   selectFieldData,
-  userAdded,
-  userUpdated,
   selectUser,
+  updateUser,
+  addUser,
+  deleteUser,
 } from "../features/users/userSlice";
 
 const Form = () => {
@@ -24,22 +23,17 @@ const Form = () => {
   const fieldData = useSelector(selectFieldData);
 
   const handleDeleteSelected = () => {
-    console.log(users)
-    console.log(editUserId)
-    console.log(fieldData.id)
-    console.log(fieldData.selected)
     if (
       editUserId !== -1 &&
       fieldData.id === editUserId &&
-      selectedIds.includes(editUserId)
+      fieldData.selected === true
     ) {
       dispatch(onFieldReset());
       dispatch(onEdited());
     }
     for (let user of users) {
-        if (user.selected) {
-        axios.delete(`/users/${user.id}`);
-        dispatch(userDeleted(user.id));
+      if (user.selected) {
+        dispatch(deleteUser(user.id));
       }
     }
   };
@@ -89,24 +83,25 @@ const Form = () => {
   };
 
   const handleSubmit = (e) => {
+    // debugger
     e.preventDefault();
-    console.log(validateSubmit());
     if (validateSubmit()) {
       if (editUserId !== -1) {
         // Edit existing user
-        axios.put(`/users/${editUserId}`, fieldData).then((response) => {
-          dispatch(
-            userUpdated({
-              id: editUserId,
-              user: response.data,
-            })
-          );
-        });
+        dispatch(
+          updateUser({
+            id: editUserId,
+            fieldData: fieldData,
+          })
+        );
       } else {
-        // Add new user
-        axios.post("/users", fieldData).then((response) => {
-          dispatch(userAdded(response.data));
-        });
+        let number = 1;
+        if(users.length){
+          let getId = users.map((x) => x.id);
+          number = Math.max(...getId) + 1;
+        }
+        dispatch(onFieldChange({ name: "id", value: changeId() }));
+        dispatch(addUser(fieldData));
       }
       dispatch(onEdited());
       dispatch(onFieldReset());
@@ -137,9 +132,9 @@ const Form = () => {
 
   const changeId = () => {
     let number = 1;
-    if (users.length === 0) {
+    if (!users.length) {
       return number;
-    } else if (users.length > 0) {
+    } else if (users.length) {
       let getId = users.map((x) => x.id);
       number = Math.max(...getId) + 1;
       return number;
@@ -423,14 +418,14 @@ const Form = () => {
           }
 
           <br />
-          <button type="submit" className="formButton" onClick={SettingId}>
+          <button type="submit" className="formButton">
             {editUserId !== -1 ? "Update" : "Submit"}
           </button>
           <button type="button" className="formButton" onClick={resetForm}>
             Reset Form
           </button>
-          {users.filter(user => user.selected === true).length > 0 && (
-            <button className="formButton" onClick={handleDeleteSelected}>
+          {users.filter((user) => user.selected === true).length > 0 && (
+            <button type="button" className="formButton" onClick={handleDeleteSelected}>
               Delete Selected
             </button>
           )}
