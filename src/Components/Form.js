@@ -14,8 +14,6 @@ import {
   userAdded,
   userUpdated,
   selectUser,
-  selectSelectedIds,
-  onClearSelectedIds,
 } from "../features/users/userSlice";
 
 const Form = () => {
@@ -24,11 +22,9 @@ const Form = () => {
   const editUserId = useSelector(selectEditUserId);
   const errorData = useSelector(selectErrorData);
   const fieldData = useSelector(selectFieldData);
-  const selectedIds = useSelector(selectSelectedIds);
 
   const handleDeleteSelected = () => {
     console.log(users)
-    debugger
     console.log(editUserId)
     console.log(fieldData.id)
     console.log(fieldData.selected)
@@ -41,12 +37,11 @@ const Form = () => {
       dispatch(onEdited());
     }
     for (let user of users) {
-      if (selectedIds.includes(user.id)) {
+        if (user.selected) {
         axios.delete(`/users/${user.id}`);
         dispatch(userDeleted(user.id));
       }
     }
-    dispatch(onClearSelectedIds());
   };
 
   const handleCheckboxChange = (e) => {
@@ -95,6 +90,7 @@ const Form = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    console.log(validateSubmit());
     if (validateSubmit()) {
       if (editUserId !== -1) {
         // Edit existing user
@@ -112,9 +108,9 @@ const Form = () => {
           dispatch(userAdded(response.data));
         });
       }
+      dispatch(onEdited());
+      dispatch(onFieldReset());
     }
-    dispatch(onEdited());
-    dispatch(onFieldReset());
   };
 
   const validateSubmit = () => {
@@ -433,7 +429,7 @@ const Form = () => {
           <button type="button" className="formButton" onClick={resetForm}>
             Reset Form
           </button>
-          {selectedIds.length > 0 && (
+          {users.filter(user => user.selected === true).length > 0 && (
             <button className="formButton" onClick={handleDeleteSelected}>
               Delete Selected
             </button>

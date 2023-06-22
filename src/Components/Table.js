@@ -11,7 +11,6 @@ import {
   selectEditUserId,
   selectFieldData,
   userDeleted,
-  selectSelectedIds,
 } from "../features/users/userSlice";
 import { selectUser } from "../features/users/userSlice";
 
@@ -20,24 +19,14 @@ const Table = () => {
   const users = useSelector(selectUser);
   const fieldData = useSelector(selectFieldData);
   const editUserId = useSelector(selectEditUserId);
-  const selectedIds = useSelector(selectSelectedIds);
 
-  const handleRowCheckboxChange = (e,id) => {
-    // debugger
-    console.log(id);
-    let checked = false;
-    checked = e.target.checked
-    console.log(checked);
-    dispatch(onUpdateSelected({
-        id: id,
-        checked: e.target.checked,
-      }));
-      console.log
+  const handleRowCheckboxChange = (id) => {
+    dispatch(onUpdateSelected(id));
   };
 
-  const handleSelectAllRowsChange= (e) => {
+  const handleSelectAllRowsChange = (e) => {
     dispatch(onUpdateMainCheckbox(e.target.checked));
-  }
+  };
 
   const handleEdit = (id) => {
     dispatch(onEdit(id));
@@ -74,7 +63,7 @@ const Table = () => {
                     <th>
                       <input
                         type="checkbox"
-                        checked={selectedIds.length === users.length}
+                        checked={users.filter((user) => user.selected === true).length === users.length}
                         onChange={(e) => handleSelectAllRowsChange(e)}
                       />
                     </th>
@@ -98,8 +87,8 @@ const Table = () => {
                       <td>
                         <input
                           type="checkbox"
-                          checked={selectedIds.includes(user.id)}
-                            onChange={(e) => handleRowCheckboxChange(e, user.id)}
+                          checked={user.selected}
+                          onChange={() => handleRowCheckboxChange(user.id)}
                         />
                       </td>
                       <td>{user.id}</td>
